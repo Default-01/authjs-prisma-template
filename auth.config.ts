@@ -1,11 +1,11 @@
-import bcryptjs from "bcryptjs";
-import type { NextAuthConfig } from "next-auth";
-import Credentials from "next-auth/providers/credentials";
-import Github from "next-auth/providers/github";
-import Google from "next-auth/providers/google";
-import { InvalidCredentials, UserNotFound } from "./lib/auth";
-import { CredentialsSchema } from "./schemas/auth";
-import { findUserbyEmail } from "./services";
+import bcryptjs from 'bcryptjs';
+import type { NextAuthConfig } from 'next-auth';
+import Credentials from 'next-auth/providers/credentials';
+import Github from 'next-auth/providers/github';
+import Google from 'next-auth/providers/google';
+import { InvalidCredentials, UserNotFound } from './lib/auth';
+import { CredentialsSchema } from './schemas/auth';
+import { findUserbyEmail } from './services';
 
 export default {
 	providers: [
