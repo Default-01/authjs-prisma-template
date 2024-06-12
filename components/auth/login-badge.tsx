@@ -1,21 +1,14 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuLabel,
-	DropdownMenuSeparator,
-	DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { CircleUser, LogOut } from "lucide-react";
-import type { User } from "next-auth";
-import Link from "next/link";
-import { LineMdCogLoop } from "../icons";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import LoginButton from "./login-button";
-import LogoutButton from "./logout-button";
+import { Button } from '@/components/ui/button';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { CircleUser, LogOut } from 'lucide-react';
+import type { User } from 'next-auth';
+import Link from 'next/link';
+import { LineMdCogLoop } from '../icons';
+import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
+import LoginButton from './login-button';
+import LogoutButton from './logout-button';
 
 type Props = {
 	user?: User;
@@ -28,26 +21,30 @@ const LoginBadge = ({ user }: Props) => {
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
 						<Avatar>
-							<AvatarImage src={user?.image || ""} />
-							<AvatarFallback className="bg-green-500">
-								<CircleUser className="h-5 w-5" />
+							<AvatarImage src={user?.image || ''} />
+							<AvatarFallback className='bg-green-500'>
+								<CircleUser className='h-5 w-5' />
 							</AvatarFallback>
 						</Avatar>
 					</DropdownMenuTrigger>
-					<DropdownMenuContent align="end">
-						<DropdownMenuLabel>Minha Conta</DropdownMenuLabel>
+					<DropdownMenuContent align='end'>
+						<DropdownMenuLabel>My account</DropdownMenuLabel>
 						<DropdownMenuSeparator />
 						<DropdownMenuItem>
-							<Link href="/auth/settings" className="flex flex-1 justify-start items-center">
-								<LineMdCogLoop className="mr-2" />
-								Perfil
+							<Link
+								href='/auth/settings'
+								className='flex flex-1 justify-start items-center'>
+								<LineMdCogLoop className='mr-2' />
+								Profile
 							</Link>
 						</DropdownMenuItem>
 						<DropdownMenuSeparator />
 						<LogoutButton>
-							<DropdownMenuItem className="p-0 m-0">
-								<Button variant={"ghost"} className="flex flex-1 justify-around">
-									<LogOut /> Sair
+							<DropdownMenuItem className='p-0 m-0'>
+								<Button
+									variant={'ghost'}
+									className='flex flex-1 justify-around'>
+									<LogOut /> Logout
 								</Button>
 							</DropdownMenuItem>
 						</LogoutButton>
@@ -56,7 +53,7 @@ const LoginBadge = ({ user }: Props) => {
 			)}
 			{!user && (
 				<LoginButton>
-					<Button variant={"default"}>Entrar</Button>
+					<Button variant={'default'}>Login</Button>
 				</LoginButton>
 			)}
 		</>

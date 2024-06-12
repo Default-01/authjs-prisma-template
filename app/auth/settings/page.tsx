@@ -17,7 +17,7 @@ export default async function Settings() {
 						<Link
 							href='#'
 							className='font-semibold text-primary'>
-							Geral
+							General
 						</Link>
 						<Link href='#'>Support</Link>
 						<Link href='#'>Advanced</Link>

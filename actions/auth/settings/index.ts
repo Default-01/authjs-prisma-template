@@ -1,14 +1,14 @@
-"use server";
+'use server';
 
-import { auth } from "@/auth";
-import { useCurrentUser } from "@/hooks/use-current-user";
-import { prisma } from "@/lib/db";
-import { UserSettingsSchema } from "@/schemas/auth";
-import { findUserbyEmail, findUserbyId } from "@/services";
-import bcryptjs from "bcryptjs";
-import type { z } from "zod";
+import { auth } from '@/auth';
+import { useCurrentUser } from '@/hooks/use-current-user';
+import { prisma } from '@/lib/db';
+import { UserSettingsSchema } from '@/schemas/auth';
+import { findUserbyEmail, findUserbyId } from '@/services';
+import bcryptjs from 'bcryptjs';
+import type { z } from 'zod';
 
-import { update } from "@/auth";
+import { update } from '@/auth';
 
 /**
  * This method saves the user's new settings
@@ -19,21 +19,21 @@ export const changeSettings = async (settings: z.infer<typeof UserSettingsSchema
 	const validData = UserSettingsSchema.safeParse(settings);
 	if (!validData.success) {
 		return {
-			error: "Dados inválidos",
+			error: 'invalid data',
 		};
 	}
 
 	const session = await auth();
 	if (!session?.user || !session?.user.id) {
 		return {
-			error: "Conecte-se para atualizar seus dados",
+			error: 'Connect to update your data',
 		};
 	}
 
 	const userData = await findUserbyId(session?.user.id);
 	if (!userData) {
 		return {
-			error: "Usuário não encontrado",
+			error: 'User not found',
 		};
 	}
 
@@ -43,7 +43,7 @@ export const changeSettings = async (settings: z.infer<typeof UserSettingsSchema
 		const validPassword = bcryptjs.compare(password, userData.password);
 		if (!validPassword) {
 			return {
-				error: "Senha atual incorreta",
+				error: 'Incorrect current password',
 			};
 		}
 
@@ -71,11 +71,11 @@ export const changeSettings = async (settings: z.infer<typeof UserSettingsSchema
 			},
 		});
 		return {
-			success: "Perfil atualizado",
+			success: 'Updated profile',
 		};
 	} catch (error) {
 		return {
-			error: "Algo deu errado",
+			error: 'Something went wrong',
 		};
 	}
 };

@@ -1,18 +1,13 @@
-"use server";
+'use server';
 
-import { signIn } from "@/auth";
-import { CredentialsSchema, MagicLinkSignInSchema } from "@/schemas/auth";
-import { findUserbyEmail } from "@/services";
-import {
-	createTwoFactorAuthToken,
-	createVerificationToken,
-	deleteTwoFactorAuthTokenById,
-	findTwoFactorAuthTokenByEmail,
-} from "@/services/auth";
-import { AuthError, CredentialsSignin } from "next-auth";
-import type { z } from "zod";
-import { sendAccountVerificationEmail } from "../email-verification";
-import { sendTwoFactorAuthEmail } from "../two-factor";
+import { signIn } from '@/auth';
+import { CredentialsSchema, MagicLinkSignInSchema } from '@/schemas/auth';
+import { findUserbyEmail } from '@/services';
+import { createTwoFactorAuthToken, createVerificationToken, deleteTwoFactorAuthTokenById, findTwoFactorAuthTokenByEmail } from '@/services/auth';
+import { AuthError, CredentialsSignin } from 'next-auth';
+import type { z } from 'zod';
+import { sendAccountVerificationEmail } from '../email-verification';
+import { sendTwoFactorAuthEmail } from '../two-factor';
 
 /**
  * This method is responsible for executing the login flow.
@@ -25,7 +20,7 @@ export const login = async (credentials: z.infer<typeof CredentialsSchema>) => {
 	const validCredentials = await CredentialsSchema.safeParse(credentials);
 	if (!validCredentials.success) {
 		return {
-			error: "Dados inválidos",
+			error: 'invalid data',
 		};
 	}
 
@@ -34,7 +29,7 @@ export const login = async (credentials: z.infer<typeof CredentialsSchema>) => {
 		const user = await findUserbyEmail(email);
 		if (!user) {
 			return {
-				error: "Usuário não encontrado",
+				error: 'User not found',
 			};
 		}
 		//Verificação de E-mail
@@ -42,7 +37,7 @@ export const login = async (credentials: z.infer<typeof CredentialsSchema>) => {
 			const verificationToken = await createVerificationToken(user.email);
 			await sendAccountVerificationEmail(user, verificationToken.token);
 			return {
-				success: "Verificação de E-mail enviada com sucesso",
+				success: 'Email verification sent successfully',
 			};
 		}
 
@@ -53,7 +48,7 @@ export const login = async (credentials: z.infer<typeof CredentialsSchema>) => {
 
 				if (!twoFactorAuthToken || twoFactorAuthToken.token !== code) {
 					return {
-						error: "Código Inválido",
+						error: 'Invalid code',
 						data: {
 							twoFactorAuthEnabled: true,
 						},
@@ -64,7 +59,7 @@ export const login = async (credentials: z.infer<typeof CredentialsSchema>) => {
 
 				if (hasExpired) {
 					return {
-						error: "Código Expirado",
+						error: 'Expired Code',
 						data: {
 							twoFactorAuthEnabled: true,
 						},
@@ -84,7 +79,7 @@ export const login = async (credentials: z.infer<typeof CredentialsSchema>) => {
 			}
 		}
 
-		const resp = await signIn("credentials", {
+		const resp = await signIn('credentials', {
 			email,
 			password,
 			redirectTo: process.env.AUTH_LOGIN_REDIRECT,
@@ -93,7 +88,7 @@ export const login = async (credentials: z.infer<typeof CredentialsSchema>) => {
 		if (err instanceof AuthError) {
 			if (err instanceof CredentialsSignin) {
 				return {
-					error: "Credenciais inválidas",
+					error: 'Invalid credentials',
 				};
 			}
 		}

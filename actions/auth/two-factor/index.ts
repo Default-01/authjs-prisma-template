@@ -1,10 +1,10 @@
-"use server";
+'use server';
 
-import { prisma } from "@/lib/db";
-import mail from "@/lib/mail";
-import { findUserbyEmail } from "@/services";
-import { findTwoFactorAuthTokeByToken } from "@/services/auth";
-import type { User } from "@prisma/client";
+import { prisma } from '@/lib/db';
+import mail from '@/lib/mail';
+import { findUserbyEmail } from '@/services';
+import { findTwoFactorAuthTokeByToken } from '@/services/auth';
+import type { User } from '@prisma/client';
 
 /**
  * This method sends an e-mail to the user with the 6 digits code to login
@@ -25,7 +25,7 @@ export const sendTwoFactorAuthEmail = async (user: User, token: string) => {
 
 	if (!RESEND_EMAIL_FROM || !OTP_SUBJECT) {
 		return {
-			error: "Configuração de ambiente insuficiente para envio de e-mail.",
+			error: 'Insufficient environment configuration for sending email.',
 		};
 	}
 
@@ -35,7 +35,7 @@ export const sendTwoFactorAuthEmail = async (user: User, token: string) => {
 			from: RESEND_EMAIL_FROM,
 			to: email,
 			subject: OTP_SUBJECT,
-			html: `<p>Sue código OTP: ${token}</p>`,
+			html: `<p>Your code OTP: ${token}</p>`,
 		});
 
 		if (error)
@@ -43,7 +43,7 @@ export const sendTwoFactorAuthEmail = async (user: User, token: string) => {
 				error,
 			};
 		return {
-			success: "E-mail enviado com sucesso",
+			success: 'Email successfully sent',
 		};
 	} catch (error) {
 		return { error };
@@ -60,21 +60,21 @@ export const verifyTwoFactorToken = async (token: string) => {
 	const existingToken = await findTwoFactorAuthTokeByToken(token);
 	if (!existingToken) {
 		return {
-			error: "Código de verificação não encontrado",
+			error: 'Verification code not found',
 		};
 	}
 
 	const isTokenExpired = new Date(existingToken.expires) < new Date();
 	if (isTokenExpired) {
 		return {
-			error: "Código de verificação expirado",
+			error: 'Expired verification code',
 		};
 	}
 
 	const user = await findUserbyEmail(existingToken.email);
 	if (!user) {
 		return {
-			error: "Usuário não encontrado",
+			error: 'User not found',
 		};
 	}
 
@@ -93,9 +93,9 @@ export const verifyTwoFactorToken = async (token: string) => {
 		});
 
 		return {
-			success: "Autênticação de dois fatores verificada",
+			success: 'Two-factor authentication verified',
 		};
 	} catch (err) {
-		return { error: "Erro ao verificar o  código de autenticação de 2 fatores" };
+		return { error: 'Error verifying 2-factor authentication code' };
 	}
 };

@@ -1,10 +1,10 @@
-"use server";
+'use server';
 
-import { prisma } from "@/lib/db";
-import mail from "@/lib/mail";
-import { findUserbyEmail } from "@/services";
-import { findVerificationTokenbyToken } from "@/services/auth";
-import type { User } from "@prisma/client";
+import { prisma } from '@/lib/db';
+import mail from '@/lib/mail';
+import { findUserbyEmail } from '@/services';
+import { findVerificationTokenbyToken } from '@/services/auth';
+import type { User } from '@prisma/client';
 /**
  * This method uses Resend to send an email to the user to verify
  * the ownership of the email by the user.
@@ -17,7 +17,7 @@ export const sendAccountVerificationEmail = async (user: User, token: string) =>
 	const { RESEND_EMAIL_FROM, VERIFICATION_SUBJECT, NEXT_PUBLIC_URL, VERIFICATION_URL } = process.env;
 	if (!RESEND_EMAIL_FROM || !VERIFICATION_SUBJECT || !NEXT_PUBLIC_URL || !VERIFICATION_URL) {
 		return {
-			error: "Configuração de ambiente insuficiente para envio de e-mail.",
+			error: 'Insufficient environment configuration for sending email.',
 		};
 	}
 
@@ -28,7 +28,7 @@ export const sendAccountVerificationEmail = async (user: User, token: string) =>
 			from: RESEND_EMAIL_FROM,
 			to: email,
 			subject: VERIFICATION_SUBJECT,
-			html: `<p>Clique <a href="${verificationUrl}">aqui</a> para confirmar seu e-mail.</p>`,
+			html: `<p>Click <a href="${verificationUrl}">here</a> to confirm your email.</p>`,
 		});
 
 		if (error)
@@ -36,7 +36,7 @@ export const sendAccountVerificationEmail = async (user: User, token: string) =>
 				error,
 			};
 		return {
-			success: "E-mail enviado com sucesso",
+			success: 'Email successfully sent',
 		};
 	} catch (error) {
 		return { error };
@@ -53,21 +53,21 @@ export const verifyToken = async (token: string) => {
 	const existingToken = await findVerificationTokenbyToken(token);
 	if (!existingToken) {
 		return {
-			error: "Código de verificação não encontrado",
+			error: 'Verification code not found',
 		};
 	}
 
 	const isTokenExpired = new Date(existingToken.expires) < new Date();
 	if (isTokenExpired) {
 		return {
-			error: "Código de verificação expirado",
+			error: 'Expired verification code',
 		};
 	}
 
 	const user = await findUserbyEmail(existingToken.email);
 	if (!user) {
 		return {
-			error: "Usuário não encontrado",
+			error: 'User not found',
 		};
 	}
 
@@ -86,9 +86,9 @@ export const verifyToken = async (token: string) => {
 		});
 
 		return {
-			success: "E-mail verificado",
+			success: 'Verified email',
 		};
 	} catch (err) {
-		return { error: "Erro ao atualizar verificação de e-mail" };
+		return { error: 'Error updating email verification' };
 	}
 };

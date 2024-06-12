@@ -1,13 +1,13 @@
-"use server";
+'use server';
 
-import { prisma } from "@/lib/db";
-import { RegisterSchema } from "@/schemas/auth";
-import { createVerificationToken } from "@/services/auth";
-import { UserRole } from "@prisma/client";
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
-import bcryptjs from "bcryptjs";
-import type { z } from "zod";
-import { sendAccountVerificationEmail } from "../email-verification";
+import { prisma } from '@/lib/db';
+import { RegisterSchema } from '@/schemas/auth';
+import { createVerificationToken } from '@/services/auth';
+import { UserRole } from '@prisma/client';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import bcryptjs from 'bcryptjs';
+import type { z } from 'zod';
+import { sendAccountVerificationEmail } from '../email-verification';
 
 /**
  * This method creates the user for Credentials provider
@@ -19,7 +19,7 @@ export const register = async (user: z.infer<typeof RegisterSchema>) => {
 
 	if (!valid.success) {
 		return {
-			error: "Dados inválidos",
+			error: 'invalid data',
 		};
 	}
 
@@ -38,13 +38,13 @@ export const register = async (user: z.infer<typeof RegisterSchema>) => {
 		const verificationToken = await createVerificationToken(email);
 		await sendAccountVerificationEmail(createdUser, verificationToken.token);
 		return {
-			success: "E-mail de verificação enviado",
+			success: 'Verification email sent',
 		};
 	} catch (error) {
 		if (error instanceof PrismaClientKnownRequestError) {
-			if (error.code === "P2002") {
+			if (error.code === 'P2002') {
 				return {
-					error: "Já existe uma conta relacionada a este e-mail.",
+					error: 'An account related to this email already exists.',
 				};
 			}
 		}

@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 export const CredentialsSchema = z.object({
 	email: z.string().email(),
@@ -36,9 +36,9 @@ export const UserSettingsSchema = z
 			return true;
 		},
 		{
-			message: "Nova senha requerida",
-			path: ["newPassword"],
-		},
+			message: 'New password required',
+			path: ['newPassword'],
+		}
 	)
 	.refine(
 		(values) => {
@@ -46,9 +46,9 @@ export const UserSettingsSchema = z
 			return true;
 		},
 		{
-			message: "Senha requerida",
-			path: ["password"],
-		},
+			message: 'Password required',
+			path: ['password'],
+		}
 	);
 // .refine(
 // 	(values) => {

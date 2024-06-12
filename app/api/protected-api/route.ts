@@ -1,17 +1,17 @@
-import { auth } from "@/auth";
-import { NextResponse } from "next/server";
+import { auth } from '@/auth';
+import { NextResponse } from 'next/server';
 
 export const GET = auth((req) => {
 	if (req.auth)
 		return NextResponse.json({
-			message: "Usuário Autenticado",
+			message: 'Authenticated User',
 		});
 	return NextResponse.json(
 		{
-			message: "Não Autenticado",
+			message: 'Not Authenticated',
 		},
 		{
 			status: 401,
-		},
+		}
 	);
 });

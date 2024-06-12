@@ -1,16 +1,11 @@
-"use server";
+'use server';
 
-import mail from "@/lib/mail";
-import { NewPasswordSchema, ResetPasswordSchema } from "@/schemas/auth";
-import { findUserbyEmail } from "@/services";
-import {
-	createResetPasswordToken,
-	deleteResetPasswordToken,
-	findResetPasswordTokenByToken,
-	updatePassword,
-} from "@/services/auth";
-import bcryptjs from "bcryptjs";
-import type { z } from "zod";
+import mail from '@/lib/mail';
+import { NewPasswordSchema, ResetPasswordSchema } from '@/schemas/auth';
+import { findUserbyEmail } from '@/services';
+import { createResetPasswordToken, deleteResetPasswordToken, findResetPasswordTokenByToken, updatePassword } from '@/services/auth';
+import bcryptjs from 'bcryptjs';
+import type { z } from 'zod';
 
 /**
  * This method initiates the reset password process
@@ -20,20 +15,20 @@ import type { z } from "zod";
 export const resetPassword = async (values: z.infer<typeof ResetPasswordSchema>) => {
 	const validatedEmail = ResetPasswordSchema.safeParse(values);
 	if (!validatedEmail.success) {
-		return { error: "E-mail inválido" };
+		return { error: 'Invalid email' };
 	}
 
 	const { email } = validatedEmail.data;
 
 	const existingUser = await findUserbyEmail(email);
 	if (!existingUser) {
-		return { error: "Usuário não encontrado" };
+		return { error: 'User not found' };
 	}
 
 	const resetPasswordToken = await createResetPasswordToken(email);
 	await sendResetPasswordEmail(resetPasswordToken.email, resetPasswordToken.token);
 
-	return { success: "E-mail de mudança de senha enviado" };
+	return { success: 'Password change email sent' };
 };
 
 /**
@@ -46,7 +41,7 @@ export const sendResetPasswordEmail = async (email: string, token: string) => {
 	const { NEXT_PUBLIC_URL, RESEND_EMAIL_FROM, RESET_PASSWORD_SUBJECT, RESET_PASSWORD_URL } = process.env;
 
 	if (!NEXT_PUBLIC_URL || !RESEND_EMAIL_FROM || !RESET_PASSWORD_SUBJECT || !RESET_PASSWORD_URL) {
-		return { error: "Configuração de ambiente insuficiente para envio de e-mail." };
+		return { error: 'Insufficient environment configuration for sending email.' };
 	}
 
 	const resetUrl = `${NEXT_PUBLIC_URL}${RESET_PASSWORD_URL}?token=${token}`;
@@ -54,7 +49,7 @@ export const sendResetPasswordEmail = async (email: string, token: string) => {
 		from: RESEND_EMAIL_FROM,
 		to: email,
 		subject: RESET_PASSWORD_SUBJECT,
-		html: `<p>Clique <a href="${resetUrl}">aqui</a> para modificar sua senha.</p>`,
+		html: `<p>Click <a href="${resetUrl}">here</a> to change your password.</p>`,
 	});
 
 	if (error)
@@ -62,7 +57,7 @@ export const sendResetPasswordEmail = async (email: string, token: string) => {
 			error,
 		};
 	return {
-		success: "E-mail enviado com sucesso",
+		success: 'Email successfully sent',
 	};
 };
 
@@ -74,30 +69,30 @@ export const sendResetPasswordEmail = async (email: string, token: string) => {
  */
 export const changePassword = async (passwordData: z.infer<typeof NewPasswordSchema>, token: string | null) => {
 	if (!token) {
-		return { error: "Token não encontrado" };
+		return { error: 'Token not found' };
 	}
 
 	const validatedPassword = NewPasswordSchema.safeParse(passwordData);
 
 	if (!validatedPassword.success) {
-		return { error: "Dados inválidos" };
+		return { error: 'invalid data' };
 	}
 
 	const { password } = validatedPassword.data;
 
 	const existingToken = await findResetPasswordTokenByToken(token);
 	if (!existingToken) {
-		return { error: "Token inválido" };
+		return { error: 'Invalid token' };
 	}
 
 	const hasExpired = new Date(existingToken.expires) < new Date();
 	if (hasExpired) {
-		return { error: "Token Expirado" };
+		return { error: 'Expired Token' };
 	}
 
 	const existingUser = await findUserbyEmail(existingToken.email);
 	if (!existingUser) {
-		return { error: "Usuário não encontrado" };
+		return { error: 'User not found' };
 	}
 
 	const hashedPassword = await bcryptjs.hash(password, 10);
@@ -106,5 +101,5 @@ export const changePassword = async (passwordData: z.infer<typeof NewPasswordSch
 
 	await deleteResetPasswordToken(existingToken.id);
 
-	return { success: "Senha atualizada" };
+	return { success: 'Updated password' };
 };
